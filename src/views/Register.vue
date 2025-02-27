@@ -24,7 +24,7 @@ export default defineComponent({
 
     const handleRegister = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/register', {
+        const response = await axios.post('http://todo.900125.xyz/api/auth/register', {
           username: username.value,
           email: email.value,
           password: password.value,

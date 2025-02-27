@@ -35,7 +35,7 @@ import { useRouter } from 'vue-router';
 
 // 创建一个新的 axios 实例
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://todo.900125.xyz/api',
 });
 
 // 添加请求拦截器

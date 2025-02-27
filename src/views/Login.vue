@@ -25,7 +25,7 @@ export default defineComponent({
 
     const handleLogin = async () => {
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/login', {
+        const response = await axios.post('http://todo.900125.xyz/api/auth/login', {
           username: username.value,
           password: password.value,
         });
