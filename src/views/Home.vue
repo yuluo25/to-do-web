@@ -32,10 +32,11 @@ import { defineComponent, ref, onMounted } from 'vue';
 import TodoList from '../components/TodoList.vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { API_CONFIG } from '../config/api';
 
 // 创建一个新的 axios 实例
 const api = axios.create({
-  baseURL: 'http://todo.900125.xyz/api',
+  baseURL: API_CONFIG.baseURL,
 });
 
 // 添加请求拦截器

@@ -4,6 +4,7 @@
     <form @submit.prevent="handleLogin">
       <input v-model="username" placeholder="用户名" required />
       <input type="password" v-model="password" placeholder="密码" required />
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <button type="submit">登录</button>
     </form>
     <div class="register-link">
@@ -16,16 +17,19 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 
 export default defineComponent({
   setup() {
     const username = ref('');
     const password = ref('');
+    const errorMessage = ref('');
     const router = useRouter();
 
     const handleLogin = async () => {
       try {
-        const response = await axios.post('http://todo.900125.xyz/api/auth/login', {
+        errorMessage.value = ''; // 清除之前的错误信息
+        const response = await axios.post(getApiUrl('/auth/login'), {
           username: username.value,
           password: password.value,
         });
@@ -36,10 +40,17 @@ export default defineComponent({
         router.push('/home');
       } catch (error) {
         console.error('登录失败:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+          // 显示后端返回的错误信息
+          errorMessage.value = error.response.data.error;
+        } else {
+          // 如果没有具体错误信息，显示通用错误
+          errorMessage.value = '登录失败，请稍后重试';
+        }
       }
     };
 
-    return { username, password, handleLogin };
+    return { username, password, errorMessage, handleLogin };
   },
 });
 </script>
@@ -60,6 +71,12 @@ input {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+}
+.error-message {
+  color: #ff3333;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
 }
 button {
   width: 100%;
