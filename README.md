@@ -68,4 +68,4 @@ deploy.bat
 
 - 确保在`vite.config.ts`中的`base`配置与您的GitHub仓库名称一致。
 - 如果您更改了仓库名称，请同时更新`vite.config.ts`和`src/router.ts`中的路径。
-- 确保您的GitHub仓库已启用GitHub Pages功能，并选择了正确的分支（gh-pages）。 
+- 确保您的GitHub仓库已启用GitHub Pages功能，并选择了正确的分支（gh-pages）。 ！
