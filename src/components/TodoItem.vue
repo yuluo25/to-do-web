@@ -42,18 +42,19 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 1.25rem;
   margin-bottom: 0.75rem;
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal) ease;
-  border-left: 4px solid var(--primary-color);
+  background: var(--bg-blur-light);
+  border-radius: var(--border-radius-xl);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .todo-item:hover {
-  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .todo-item.completed {
@@ -69,14 +70,19 @@ export default defineComponent({
 .todo-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   flex: 1;
 }
 
 .todo-title {
   font-size: 1rem;
   color: var(--text-primary);
-  transition: color var(--transition-fast) ease;
+  transition: color var(--transition-normal);
+}
+
+.completed .todo-title {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
 }
 
 .todo-actions {
@@ -85,71 +91,71 @@ export default defineComponent({
 }
 
 .btn-icon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 36px;
+  height: 36px;
   border-radius: var(--border-radius-full);
-  background-color: transparent;
+  border: none;
+  background: transparent;
   color: var(--text-tertiary);
-  transition: all var(--transition-fast) ease;
-  padding: 0;
+  transition: all var(--transition-normal);
+  cursor: pointer;
 }
 
 .btn-icon:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--danger-color);
-  transform: scale(1.1);
+  background: var(--danger-color);
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.5px;
 }
 
 .checkbox-wrapper {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
 .todo-checkbox {
   position: absolute;
   opacity: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
-  height: 0;
-  width: 0;
 }
 
 .checkbox-label {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: var(--bg-secondary);
+  width: 100%;
+  height: 100%;
+  background: var(--bg-secondary);
   border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  transition: all var(--transition-fast) ease;
+  transition: all var(--transition-normal);
 }
 
-.todo-checkbox:checked ~ .checkbox-label {
-  background-color: var(--success-color);
-  border-color: var(--success-color);
+.todo-checkbox:checked + .checkbox-label {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
-.checkbox-label:after {
-  content: "";
+.todo-checkbox:checked + .checkbox-label::after {
+  content: '';
   position: absolute;
-  display: none;
   left: 6px;
   top: 2px;
-  width: 5px;
-  height: 10px;
+  width: 6px;
+  height: 11px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
-}
-
-.todo-checkbox:checked ~ .checkbox-label:after {
-  display: block;
 }
 
 .todo-checkbox:focus ~ .checkbox-label {

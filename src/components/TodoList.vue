@@ -42,7 +42,8 @@ export default defineComponent({
 
 <style scoped>
 .todo-list-container {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
 }
 
 .todo-list {
@@ -57,47 +58,49 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
-  background-color: var(--bg-tertiary);
-  border-radius: var(--border-radius-lg);
-  color: var(--text-tertiary);
   text-align: center;
+  background: var(--bg-blur-light);
+  border-radius: var(--border-radius-2xl);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .empty-icon {
-  margin-bottom: 1rem;
   color: var(--text-tertiary);
-  opacity: 0.5;
+  margin-bottom: 1.5rem;
+  stroke-width: 1px;
 }
 
 .empty-text {
   font-size: 1.25rem;
   font-weight: 500;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
-  color: var(--text-secondary);
 }
 
 .empty-hint {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text-tertiary);
 }
 
 /* 列表动画 */
 .todo-list-enter-active,
 .todo-list-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .todo-list-enter-from {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(-20px);
 }
 
 .todo-list-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(20px);
 }
 
 .todo-list-move {
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
