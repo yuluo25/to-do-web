@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo 应用</title>
+    <script>
+        // 处理来自404页面的重定向
+        (function() {
+            const redirect = location.search.match(/[?&]p=([^&]*)/);
+            const query = location.search.match(/[?&]q=([^&]*)/);
+            
+            if (redirect && redirect[1]) {
+                history.replaceState(null, null, 
+                    location.pathname.replace(/\/$/, '') + 
+                    '/' + redirect[1] + 
+                    (query && query[1] ? '?' + query[1] : '') + 
+                    location.hash
+                );
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
