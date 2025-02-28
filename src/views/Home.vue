@@ -102,25 +102,12 @@ import TodoList from '../components/TodoList.vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { API_CONFIG } from '../config/api';
+import { isAuthenticated, setupAxiosAuth } from '../utils/auth';
 
 // 创建一个新的 axios 实例
 const api = axios.create({
   baseURL: API_CONFIG.baseURL,
 });
-
-// 添加请求拦截器
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 export default defineComponent({
   components: {
@@ -130,7 +117,7 @@ export default defineComponent({
     const router = useRouter();
     const newTodo = ref('');
     const todos = ref<Array<{id: string, title: string, completed: boolean}>>([]);
-    const isLoggedIn = ref(false);
+    const isLoggedIn = ref(isAuthenticated());
     const isLoading = ref(false);
     const errorMessage = ref('');
 
@@ -261,28 +248,27 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      // 检查用户是否已登录
-      const token = localStorage.getItem('token');
-      if (token) {
-        isLoggedIn.value = true;
+      // 设置 axios 认证拦截器
+      setupAxiosAuth();
+      // 如果已登录，获取待办事项
+      if (isLoggedIn.value) {
         fetchTodos();
-      } else {
-        isLoggedIn.value = false;
       }
     });
 
-    return { 
-      newTodo, 
-      todos, 
-      addTodo, 
-      removeTodo, 
-      toggleTodo,
-      goToLogin, 
-      isLoggedIn, 
-      isLoading, 
+    return {
+      newTodo,
+      todos,
+      isLoggedIn,
+      isLoading,
       errorMessage,
       completedCount,
-      completionRate
+      completionRate,
+      fetchTodos,
+      addTodo,
+      removeTodo,
+      toggleTodo,
+      goToLogin
     };
   },
 });

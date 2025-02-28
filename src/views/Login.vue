@@ -77,6 +77,7 @@ import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { getApiUrl } from '../config/api';
+import { saveToken, setupAxiosAuth } from '../utils/auth';
 
 export default defineComponent({
   setup() {
@@ -94,9 +95,11 @@ export default defineComponent({
           username: username.value,
           password: password.value,
         });
-        console.log('登录成功:', response.data);
-        // 存储 token
-        localStorage.setItem('token', response.data.token);
+        
+        // 使用新的 token 保存方法
+        saveToken(response.data.token);
+        // 设置 axios 认证拦截器
+        setupAxiosAuth();
         // 登录成功后重定向到 Home 页面
         router.push('/home');
       } catch (error) {
