@@ -1,5 +1,5 @@
 <template>
-  <li class="todo-item" :class="{ 'completed': todo.completed }">
+  <li class="todo-item" :class="{ 'completed': todo.completed, 'no-transition': noTransition }">
     <div class="todo-content">
       <div class="checkbox-wrapper">
         <input 
@@ -33,6 +33,10 @@ export default defineComponent({
       type: Object as PropType<{id: string, title: string, completed?: boolean}>,
       required: true,
     },
+    noTransition: {
+      type: Boolean,
+      default: false,
+    },
   },
 });
 </script>
@@ -50,6 +54,11 @@ export default defineComponent({
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 禁用已确认项目的过渡动画 */
+.no-transition.todo-item {
+  transition: none !important;
 }
 
 .todo-item:hover {

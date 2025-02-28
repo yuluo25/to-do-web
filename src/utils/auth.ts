@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { getApiUrl } from '../config/api';
 
 // Token 相关的类型定义
@@ -47,12 +47,13 @@ export const isAuthenticated = (): boolean => {
 };
 
 // 刷新 token
-export const refreshToken = async (): Promise<boolean> => {
+export const refreshToken = async (customAxios?: AxiosInstance): Promise<boolean> => {
   const currentToken = getToken();
   if (!currentToken) return false;
 
   try {
-    const response = await axios.post(getApiUrl('/auth/refresh'), {}, {
+    const axiosInstance = customAxios || axios;
+    const response = await axiosInstance.post(getApiUrl('/auth/refresh'), {}, {
       headers: {
         Authorization: `Bearer ${currentToken}`,
       },
@@ -70,8 +71,11 @@ export const refreshToken = async (): Promise<boolean> => {
 };
 
 // 设置 axios 默认请求头
-export const setupAxiosAuth = () => {
-  axios.interceptors.request.use(
+export const setupAxiosAuth = (customAxios?: AxiosInstance) => {
+  const axiosInstance = customAxios || axios;
+
+  // 请求拦截器
+  axiosInstance.interceptors.request.use(
     (config) => {
       const token = getToken();
       if (token) {
@@ -85,7 +89,7 @@ export const setupAxiosAuth = () => {
   );
 
   // 响应拦截器处理 token 过期
-  axios.interceptors.response.use(
+  axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
@@ -95,13 +99,13 @@ export const setupAxiosAuth = () => {
         originalRequest._retry = true;
         
         // 尝试刷新 token
-        const refreshed = await refreshToken();
+        const refreshed = await refreshToken(axiosInstance);
         if (refreshed) {
           // 更新请求头中的 token
           const token = getToken();
           originalRequest.headers.Authorization = `Bearer ${token}`;
           // 重试原始请求
-          return axios(originalRequest);
+          return axiosInstance(originalRequest);
         }
       }
       

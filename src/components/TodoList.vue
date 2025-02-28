@@ -1,14 +1,15 @@
 <template>
   <div class="todo-list-container">
-    <transition-group name="todo-list" tag="ul" class="todo-list">
+    <ul class="todo-list">
       <TodoItem
         v-for="(todo, index) in todos"
         :key="todo.id"
         :todo="todo"
+        :is-new="!todo.confirmed"
         @remove="() => $emit('remove', index)"
         @toggle="() => $emit('toggle', index)"
       />
-    </transition-group>
+    </ul>
     <div v-if="todos.length === 0" class="empty-state">
       <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="empty-icon">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -33,7 +34,7 @@ export default defineComponent({
   },
   props: {
     todos: {
-      type: Array as PropType<Array<{id: string, title: string, completed?: boolean}>>,
+      type: Array as PropType<Array<{id: string, title: string, completed?: boolean, confirmed?: boolean}>>,
       required: true,
     },
   },
@@ -82,25 +83,5 @@ export default defineComponent({
 .empty-hint {
   font-size: 1rem;
   color: var(--text-tertiary);
-}
-
-/* 列表动画 */
-.todo-list-enter-active,
-.todo-list-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.todo-list-enter-from {
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-.todo-list-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-
-.todo-list-move {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

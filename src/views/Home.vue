@@ -104,10 +104,13 @@ import { useRouter } from 'vue-router';
 import { API_CONFIG } from '../config/api';
 import { isAuthenticated, setupAxiosAuth } from '../utils/auth';
 
-// 创建一个新的 axios 实例
+// 创建一个新的 axios 实例并配置
 const api = axios.create({
   baseURL: API_CONFIG.baseURL,
 });
+
+// 为该实例配置认证拦截器
+setupAxiosAuth(api);
 
 export default defineComponent({
   components: {
@@ -159,19 +162,41 @@ export default defineComponent({
 
     const addTodo = async () => {
       if (newTodo.value.trim()) {
-        const todoText = newTodo.value.trim();
+        // 创建一个临时ID，用于在后端响应前标识这个待办事项
+        const tempId = `temp-${Date.now()}`;
+        // 创建新的待办事项对象
+        const newTodoItem = {
+          id: tempId,
+          title: newTodo.value.trim(),
+          completed: false,
+          confirmed: false // 添加confirmed属性标记是否已确认
+        };
+        
+        // 先在前端添加，实现即时反馈
+        todos.value.push(newTodoItem);
+        // 清空输入框
+        const todoText = newTodo.value;
         newTodo.value = '';
         
         try {
           // 发送请求到后端
           const response = await api.post('/todos', { title: todoText });
           
-          // 使用后端返回的数据直接添加到列表
-          todos.value.push({
-            ...response.data,
-            completed: response.data.completed || false
-          });
+          // 请求成功，更新ID和confirmed状态，但保持DOM元素不变
+          const index = todos.value.findIndex(todo => todo.id === tempId);
+          if (index !== -1) {
+            Object.assign(todos.value[index], {
+              id: response.data.id,
+              confirmed: true,
+              completed: response.data.completed || false
+            });
+          }
         } catch (error) {
+          // 请求失败，从列表中移除临时添加的项
+          const index = todos.value.findIndex(todo => todo.id === tempId);
+          if (index !== -1) {
+            todos.value.splice(index, 1);
+          }
           // 恢复输入框内容，方便用户重试
           newTodo.value = todoText;
           console.error('添加待办事项失败:', error);
@@ -228,8 +253,6 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      // 设置 axios 认证拦截器
-      setupAxiosAuth();
       // 如果已登录，获取待办事项
       if (isLoggedIn.value) {
         fetchTodos();
