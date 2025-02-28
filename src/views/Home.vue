@@ -159,39 +159,19 @@ export default defineComponent({
 
     const addTodo = async () => {
       if (newTodo.value.trim()) {
-        // 创建一个临时ID，用于在后端响应前标识这个待办事项
-        const tempId = `temp-${Date.now()}`;
-        // 创建新的待办事项对象
-        const newTodoItem = {
-          id: tempId,
-          title: newTodo.value.trim(),
-          completed: false
-        };
-        
-        // 先在前端添加，实现即时反馈
-        todos.value.push(newTodoItem);
-        // 清空输入框
-        const todoText = newTodo.value;
+        const todoText = newTodo.value.trim();
         newTodo.value = '';
         
         try {
           // 发送请求到后端
           const response = await api.post('/todos', { title: todoText });
           
-          // 请求成功，用后端返回的数据（包含真实ID）替换临时数据
-          const index = todos.value.findIndex(todo => todo.id === tempId);
-          if (index !== -1) {
-            todos.value[index] = {
-              ...response.data,
-              completed: response.data.completed || false
-            };
-          }
+          // 使用后端返回的数据直接添加到列表
+          todos.value.push({
+            ...response.data,
+            completed: response.data.completed || false
+          });
         } catch (error) {
-          // 请求失败，从列表中移除临时添加的项
-          const index = todos.value.findIndex(todo => todo.id === tempId);
-          if (index !== -1) {
-            todos.value.splice(index, 1);
-          }
           // 恢复输入框内容，方便用户重试
           newTodo.value = todoText;
           console.error('添加待办事项失败:', error);
